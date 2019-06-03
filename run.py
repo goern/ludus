@@ -1,9 +1,14 @@
 from http import HTTPStatus
 from flask import Flask, Response, request
-import json
+from ludus.data_formatter import DataFormatter
+from ludus.validator import Validator
+
+#constants
+EVENT_SOURCE_GITHUB = "github"
+EVENT_SOURCE_TRELLO = "trello"
+
 
 app = Flask(__name__)
-
 
 @app.route('/github', methods=['POST'])
 def github_event():
@@ -11,8 +16,17 @@ def github_event():
     payload = None
     status_code = HTTPStatus.OK
 
-    content = request.json
-    print(json.dumps(content))
+    data = request.json
+
+    validator = Validator.get_validator(EVENT_SOURCE_GITHUB)
+
+    is_valid = validator.is_valid(data)
+
+    print(is_valid)
+
+    #formatted_data_json = DataFormatter.format(data, EVENT_SOURCE_GITHUB)
+
+    #print(formatted_data_json)
 
     return resp,status_code
 
@@ -23,7 +37,19 @@ def trello_event():
     payload = None
     status_code = HTTPStatus.OK
 
-    content = request.json
-    print(json.dumps(content))
+    data = request.json
+
+    validator = Validator.get_validator(EVENT_SOURCE_TRELLO)
+
+    is_valid = validator.is_valid(data)
+
+    print(is_valid)
+
+    #formatted_data_json = DataFormatter.format(data, EVENT_SOURCE_TRELLO)
+
+    #print(formatted_data_json)
 
     return resp, status_code
+
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', port=5000)
