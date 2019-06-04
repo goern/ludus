@@ -31,7 +31,7 @@ class TrelloEventValidator:
         #print(json.dumps(event))
 
         if 'action' in event and 'type' in event['action'] and event['action']['type'] == 'createCard' and \
-                event['action']['data']['list'] == 'New':
+                event['action']['data']['list']['name'] == 'New':
             return True, 'new_idea'
 
         elif 'action' in event and 'type' in event['action'] and event['action']['type'] == 'updateCard' \
