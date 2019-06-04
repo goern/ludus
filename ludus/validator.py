@@ -10,31 +10,33 @@ class Validator:
 
 
 class GithubEventValidator:
-    def is_valid(self, data):
+    def is_valid(self, event):
 
-        #print(json.dumps(data))
+        #print(json.dumps(event))
 
-        if 'action' in data and data['action'] == "opened" and 'issue' in data:
+        if 'action' in event and event['action'] == "opened" and 'issue' in event:
             return True, 'issue'
-        elif 'action' in data and data['action'] == "closed" and 'pull_request' in data:
+        elif 'action' in event and event['action'] == "closed" and 'pull_request' in event and \
+                event['pull_request']['merged'] == True:
             return True, 'pull_request'
-        elif 'comment' in data:
+        elif 'comment' in event:
             return True, 'comment'
 
         return False, None
 
 
 class TrelloEventValidator:
-    def is_valid(self, data):
+    def is_valid(self, event):
 
-        #print(json.dumps(data))
+        #print(json.dumps(event))
 
-        if 'action' in data and 'type' in data['action'] and data['action']['type'] == 'createCard':
+        if 'action' in event and 'type' in event['action'] and event['action']['type'] == 'createCard' and \
+                event['action']['data']['list'] == 'New':
             return True, 'new_idea'
-        elif 'action' in data and 'type' in data['action'] and data['action']['type'] == 'updateCard' \
-                and 'listAfter' in data['action']['data'] and ( data['action']['data']['listAfter']['name'] == 'Completed'\
-                or data['action']['data']['listAfter']['name'] == 'Done') :
 
+        elif 'action' in event and 'type' in event['action'] and event['action']['type'] == 'updateCard' \
+                and 'listAfter' in event['action']['data'] and ( event['action']['data']['listAfter']['name'] == 'Completed'\
+                or event['action']['data']['listAfter']['name'] == 'Done') :
             return True, 'task_completed'
 
         return False, None
