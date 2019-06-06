@@ -15,7 +15,7 @@ class NewIdeaEventFormatter:
         formatted_event['event_source'] = 'trello'
         formatted_event['event_url'] = event['model']['url']
         formatted_event['event_type'] = event_type
-        formatted_event['raw'] = event
+        formatted_event['raw_trello'] = event
 
         return formatted_event
 
@@ -28,6 +28,6 @@ class TaskCompletedEventFormatter:
         formatted_event['event_source'] = 'trello'
         formatted_event['event_url'] = event['model']['url']
         formatted_event['event_type'] = event_type
-        formatted_event['raw'] = event
+        formatted_event['raw_trello'] = event
 
         return formatted_event

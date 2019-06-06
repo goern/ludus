@@ -15,7 +15,6 @@ class KafkaDatastore:
 
 
     def insert(self, json_payload):
-        print(json_payload)
         self.producer.send(self.topic, json_payload)
         self.producer.flush()
 

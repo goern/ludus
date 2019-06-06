@@ -18,7 +18,7 @@ class IssueEventFormatter:
         formatted_event['event_source'] = 'github'
         formatted_event['event_url'] = event['issue']['html_url']
         formatted_event['event_type'] = event_type
-        formatted_event['raw'] = event
+        formatted_event['raw_github'] = event
 
         return formatted_event
 
@@ -30,7 +30,7 @@ class PullRequestEventFormatter:
         formatted_event['event_source'] = 'github'
         formatted_event['event_url'] = event['pull_request']['html_url']
         formatted_event['event_type'] = event_type
-        formatted_event['raw'] = event
+        formatted_event['raw_github'] = event
 
         return formatted_event
 
@@ -43,6 +43,6 @@ class CommentEventFormatter:
         formatted_event['event_source'] = 'github'
         formatted_event['event_url'] = event['comment']['html_url']
         formatted_event['event_type'] = event_type
-        formatted_event['raw'] = event
+        formatted_event['raw_github'] = event
 
         return formatted_event
