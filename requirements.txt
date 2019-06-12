@@ -1,2 +1,4 @@
 Flask==1.0.3
 kafka-python==1.4.6
+DateTime==4.3
+faust==1.7.0
