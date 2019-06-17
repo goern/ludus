@@ -12,19 +12,19 @@ badges = {
         'image_file': None
     },
     'first_issue': {
-        'description': 'first issue created',
+        'description': 'awarded for creating first issue',
         'event_type': 'issue',
         'criteria': 1,
         'image_file': None
     },
     'issue_finder': {
-        'description': '10 issues created',
+        'description': 'awarded for creating 5 issues',
         'event_type': 'issue',
         'criteria': 5,
         'image_file': None
     },
     'first_comment': {
-        'description': 'first comment',
+        'description': 'awarded for first comment',
         'event_type': 'comment',
         'criteria': 1,
         'image_file': None
