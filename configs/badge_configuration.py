@@ -53,14 +53,12 @@ badges = {
         },
         'image_file': None
     },
-
     'homerun': {
         'description': 'awarded for opening issue, creating pull request, closing issue',
         'event_type': 'issue_closed',
-        'awarded_to': 'raw_github.issue.user.login',
         'criteria': {
-            'type' : 'match',
-            'field' : 'raw_github.issue.number',
+            'type': 'match',
+            'field': 'raw_github.issue.number',
             'matching_events': [
                 {
                     'event_type': 'pull_request',
