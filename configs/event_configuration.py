@@ -1,11 +1,15 @@
+from validators import pull_request_validator
+from validators import issue_validator
+
+
 event_configuration = {
     "pull_request" : {
-        "filter" : "filters/pull_request_filter.json",
-        "formatter" : "formatters/pull_request_formmatter.json"
+        "validator" : pull_request_validator.schema,
+        "formatter" : "formatters/pull_request_formmatter"
     },
 
     "issue" : {
-        "filter" : "filters/issue_filter.json",
-        "formatter" : "formatters/issue_formmatter.json"
+        "validator" : issue_validator.schema,
+        "formatter" : "formatters/issue_formmatter"
     }
 }
