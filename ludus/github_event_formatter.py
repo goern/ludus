@@ -40,7 +40,7 @@ class IssueClosedEventFormatter:
 class PullRequestEventFormatter:
     def format(self, event, event_type):
         formatted_event = dict()
-        formatted_event['username'] = event['sender']['login']
+        formatted_event['username'] = event['pull_request']['user']['login']
         formatted_event['timestamp'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         formatted_event['event_source'] = 'github'
         formatted_event['event_url'] = event['pull_request']['html_url']
@@ -54,7 +54,7 @@ class PullRequestEventFormatter:
         body = event['pull_request']['body']
         issue_number = None
 
-        match_found = re.search('closes #[0-9]+', body)
+        match_found = re.search('(closes|closed|fix|fixes|fixed|resolve|resolves|resolved)\s*#[0-9]+', body, flags=re.IGNORECASE)
         if match_found:
             print(match_found)
             issue_closes = match_found.group(0)
