@@ -12,6 +12,7 @@ kafka_configuration = {
 
 awarder_configuration = {
     'faust_app_name': 'ludus_awarder',
+    'faust_store': 'memory://',
     'events_table_name': 'aggregated_event_data_table_test_14',
     'badges_table_name': 'awarded_badges_table_test_14',
     'port' : 5001

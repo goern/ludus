@@ -12,7 +12,10 @@ import re
 
 #Setting up Faust app
 ssl_context = ssl.create_default_context(purpose=ssl.Purpose.SERVER_AUTH, cafile=config.kafka_configuration['cacert_file'])
-app = faust.App(awarder_configuration['faust_app_name'], broker='kafka://'+config.kafka_configuration['bootstrap_server'], broker_credentials=ssl_context)
+app = faust.App(awarder_configuration['faust_app_name'],
+                broker='kafka://'+config.kafka_configuration['bootstrap_server'],
+                broker_credentials=ssl_context,
+                store=awarder_configuration['faust_store'])
 
 #Setting Kafka topic for stream processors
 events = app.topic(config.kafka_configuration['topic'], value_type=LudusEvent)
