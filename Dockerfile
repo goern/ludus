@@ -1,4 +1,5 @@
 FROM python
+RUN mkdir Ludus
 COPY . /Ludus
 RUN cd Ludus
 RUN apt update
