@@ -12,7 +12,7 @@ import re
 import os
 
 #Setting up Faust app
-ssl_context = ssl.create_default_context(purpose=ssl.Purpose.SERVER_AUTH, cafile=os.environ['ludus_secret'])
+ssl_context = ssl.create_default_context(purpose=ssl.Purpose.SERVER_AUTH, cafile=config.kafka_configuration['cacert_file'])
 app = faust.App(awarder_configuration['faust_app_name'],
                 broker='kafka://'+config.kafka_configuration['bootstrap_server'],
                 broker_credentials=ssl_context,
