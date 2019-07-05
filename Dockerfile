@@ -1,4 +1,4 @@
-FROM python
+FROM ubuntu
 RUN mkdir Ludus
 COPY . /Ludus
 RUN cd Ludus
