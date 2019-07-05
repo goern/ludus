@@ -9,9 +9,10 @@ from events.ludus_badge import LudusBadge
 from ludus.datastore import Datastore
 import json
 import re
+import os
 
 #Setting up Faust app
-ssl_context = ssl.create_default_context(purpose=ssl.Purpose.SERVER_AUTH, cafile=config.kafka_configuration['cacert_file'])
+ssl_context = ssl.create_default_context(purpose=ssl.Purpose.SERVER_AUTH, cafile=os.environ['ludus_secret'])
 app = faust.App(awarder_configuration['faust_app_name'],
                 broker='kafka://'+config.kafka_configuration['bootstrap_server'],
                 broker_credentials=ssl_context,
