@@ -5,4 +5,4 @@ RUN pip3 install -r Ludus/requirements.txt
 EXPOSE 8080
 WORKDIR /Ludus
 #CMD [ "python3", "ru.py" ]
-CMD ["faust" ,"-A", "awarder" ,"worker"]
+ENTRYPOINT ["faust" ,"-A", "awarder" ,"worker"]
