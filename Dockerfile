@@ -6,4 +6,5 @@ RUN chmod 777 Ludus
 WORKDIR Ludus
 RUN mkdir resources
 RUN echo -e $ludus_secret > resources/data-hub-kafka-ca.crt
-CMD ["faust" ,"-A", "awarder" ,"worker"]
+CMD ["python3" ,"run.py"]
+#CMD ["faust" ,"-A", "awarder" ,"worker"]
