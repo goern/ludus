@@ -53,6 +53,15 @@ badges = {
         },
         'image_file': None
     },
+    'first_trello_idea': {
+        'description': 'awarded for creating first trello card in New list',
+        'event_type': 'new_idea',
+        'criteria': {
+            'type': 'count',
+            'value': 1
+        },
+        'image_file': None
+    },
     'homerun': {
         'description': 'awarded for opening issue, creating pull request, closing issue',
         'event_type': 'issue_closed',
