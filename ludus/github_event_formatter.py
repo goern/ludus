@@ -56,7 +56,6 @@ class PullRequestEventFormatter:
 
         match_found = re.search('(closes|closed|fix|fixes|fixed|resolve|resolves|resolved)\s*#[0-9]+', body, flags=re.IGNORECASE)
         if match_found:
-            print(match_found)
             issue_closes = match_found.group(0)
             issue_number = re.search('[0-9]+', issue_closes).group(0)
 
