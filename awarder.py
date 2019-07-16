@@ -5,11 +5,9 @@ from configs.badge_configuration import badges as badge_config
 from configs.config import awarder_configuration
 from configs.config import datastore_configuration
 from events.ludus_event import LudusEvent
-from events.ludus_badge import LudusBadge
 from ludus.datastore import Datastore
 import json
 import re
-import os
 
 #Setting up Faust app
 ssl_context = ssl.create_default_context(purpose=ssl.Purpose.SERVER_AUTH, cafile=config.kafka_configuration['cacert_file'])
@@ -20,46 +18,129 @@ app = faust.App(awarder_configuration['faust_app_name'],
 
 #Setting Kafka topic for stream processors
 events = app.topic(config.kafka_configuration['topic'], value_type=LudusEvent)
-badges = app.topic(config.kafka_configuration['topic'], value_type=LudusBadge)
 
 #Initializing faust tables
 event_data = app.Table(awarder_configuration['events_table_name'], default=None, partitions=8)
 awarded_badges = app.Table(awarder_configuration['badges_table_name'], default=None, partitions=8)
 
-
 #Initializing datastore
 datastore = Datastore.get_datastore(datastore_configuration['type'])
+
+
+#Initializing lookup data
+def get_event_to_badge():
+    event_to_badges = dict()
+    for badge_name in badge_config.keys():
+        badge = badge_config[badge_name]
+        badge['name'] = badge_name
+
+        if badge['criteria']['type'] == 'count':
+            if badge['event_type'] in event_to_badges:
+                badges = event_to_badges[badge['event_type']]
+                badges.append(badge)
+                event_to_badges[badge['event_type']] = badges
+            else:
+                badges = list()
+                badges.append(badge)
+                event_to_badges[badge['event_type']] = badges
+        elif badge['criteria']['type'] == 'match':
+            for matching_event in badge['criteria']['matching_events']:
+                if matching_event['event_type'] in event_to_badges:
+                    badges = event_to_badges[matching_event['event_type']]
+                    badges.append(badge)
+                    event_to_badges[matching_event['event_type']] = badges
+                else:
+                    badges = list()
+                    badges.append(badge)
+                    event_to_badges[matching_event['event_type']] = badges
+
+    return event_to_badges
+
+
+event_to_badges = get_event_to_badge()
+
 
 #Processes ludus event stream
 @app.agent(events)
 async def aggregate_events(events):
     async for event in events.group_by(LudusEvent.username):
         if event.type is None:
+            #event_json = json.dumps(event.__dict__, default=datetime_handler)
+            event_dict = event.__dict__
             if event.username not in event_data:
-                event_list = list()
-                event_list.append(event.to_representation())
-                event_data[event.username] = event_list
+                data = get_table_template()
+                updated_data = update_data(data, event_dict)
+                event_data[event.username] = updated_data
             else:
-                event_list = event_data[event.username]
-                event_list.append(event.to_representation())
-                event_data[event.username] = event_list
+                data = event_data[event.username]
+                updated_data = update_data(data, event_dict)
+                event_data[event.username] = updated_data
 
-@app.timer(120.0)
-async def evaluate_user_data_for_badges():
+            evaluate_user_data_for_badges(event_dict)
+
+
+#Functions to update event data of a particular user
+def update_data(data,event):
+    updated_count_data = update_count(data,event)
+    updated_match_data = update_match(updated_count_data,event)
+    return updated_match_data
+
+
+def update_count(data,event):
+    count = 0
+    if event['event_type'] in data['count']:
+        count = data['count'][event['event_type']]
+        count+=1
+    else:
+        count = 1
+
+    data['count'][event['event_type']] = count
+    return data
+
+
+def update_match(data,event):
+    if event['event_type'] not in event_to_badges:
+        return data
+
+    badges = event_to_badges[event['event_type']]
+
+    for badge in badges:
+        if badge['criteria']['type'] == 'match':
+            if badge['name'] not in data['match']:
+                data['match'][badge['name']] = dict()
+
+            matching_events = badge['criteria']['matching_events']
+
+            for matching_event in matching_events:
+                if matching_event['event_type'] == event['event_type']:
+                    match_value = get_match_value(matching_event['field'], event)
+
+                    if match_value in data['match'][badge['name']]:
+                        state = set(data['match'][badge['name']][match_value])
+                        state.add(event['event_type'])
+                        data['match'][badge['name']][match_value] = state
+                    else:
+                        state = set()
+                        state.add(event['event_type'])
+                        data['match'][badge['name']][match_value] = state
+                    break
+    return data
+
+
+def evaluate_user_data_for_badges(event):
     if event_data is not None:
-        for username in event_data.keys():
-            for badge_name in badge_config.keys():
-                if is_badge_awarded(username, badge_name) == False:
-                    award_badge(username,badge_name,  badge_config[badge_name])
+        for badge in event_to_badges[event['event_type']]:
+            if is_badge_awarded(event['username'], badge['name']) == False:
+                award_badge(event['username'], badge['name'], badge, event)
 
 
-def award_badge(username, badge_name, badge_details):
+def award_badge(username, badge_name, badge_details, event):
     criteria_type = badge_details['criteria']['type']
 
     if criteria_type == 'count':
         award_badge_for_type_count(username, badge_name, badge_details)
     elif criteria_type == 'match':
-        award_badge_for_type_match(username, badge_name, badge_details)
+        award_badge_for_type_match(username, badge_name, badge_details, event)
 
 
 def is_badge_awarded(username, badge_name):
@@ -69,59 +150,34 @@ def is_badge_awarded(username, badge_name):
         return True
     return False
 
+
 def award_badge_for_type_count(username, badge_name, badge_details):
-    count = 0
-    events = event_data[username]
+    event_count = event_data[username]['count'][badge_details['event_type']]
 
-    for event in events:
-        if event['event_type']== badge_details['event_type']:
-            count+=1
-
-    if count >= badge_details['criteria']['value']:
+    if event_count >= badge_details['criteria']['value']:
         store_badge(username,badge_name,badge_details, badge_name)
 
-def award_badge_for_type_match(username, badge_name, badge_details):
-    events = event_data[username]
 
-    for event in events:
-        if event['event_type']== badge_details['event_type']:
-            match_value = get_match_value(badge_details['criteria']['field'], event)
+def award_badge_for_type_match(username, badge_name, badge_details, event):
+    states = event_data[username][badge_details['criteria']['type']][badge_name]
+    field = get_matching_field(badge_details['criteria']['matching_events'],event)
+    match_value = get_match_value(field, event)
+    state = states[match_value]
+    equality = event['event_type'] + '_' +str(match_value)
 
-            equality = event['event_type'] + str(match_value)
-            if is_badge_awarded(username, equality):
-                continue
+    for matching_event in badge_details['criteria']['matching_events']:
+        if matching_event['event_type'] not in state:
+            return
 
-            status = dict()
-            for matching_event in badge_details['criteria']['matching_events']:
-                status[matching_event['event_type']] = False
-
-            for event in events:
-                check_for_matching_events(event, match_value, badge_details['criteria']['matching_events'], status)
-
-                if check_status(status):
-                    store_badge(username, badge_name, badge_details, equality)
-                    break
+    store_badge(username, badge_name, badge_details, equality)
+    del event_data[username][badge_details['criteria']['type']][badge_name][match_value]
 
 
-def check_for_matching_events(event, match_value, matching_events, status):
+def get_matching_field(matching_events, event):
     for matching_event in matching_events:
-        match_value_current_event = None
+        if matching_event['event_type'] == event['event_type']:
+            return matching_event['field']
 
-        if event['event_type'] == matching_event['event_type']:
-            match_value_current_event = get_match_value(matching_event['field'], event)
-
-        if str(match_value) == str(match_value_current_event):
-            status[matching_event['event_type']] = True
-
-def check_status(status):
-    match = True
-
-    for matching_event in status.keys():
-        if status[matching_event]  == False:
-            match = False
-            break
-
-    return match
 
 def get_match_value(match_field, event):
     is_json = re.search('[.]+', match_field)
@@ -132,38 +188,42 @@ def get_match_value(match_field, event):
 
         for i in range(1,len(fields)):
             match_value = match_value[fields[i]]
-
     else:
         match_value = event[match_field]
 
-    return match_value
-
-#Stores badges in Faust table so that are not reawareded to a User
-@app.agent(badges)
-async def store_badges(badges):
-    async for badge in badges.group_by(LudusBadge.username):
-        if badge.type == 'badge':
-            if (badge.username not in awarded_badges) or awarded_badges[badge.username] is None:
-                awarded_badges[badge.username] = set()
-
-            awarded_badges_to_current_user = set(awarded_badges[badge.username])
-            awarded_badges_to_current_user.add(badge.equality)
-            awarded_badges[badge.username] = awarded_badges_to_current_user
+    return str(match_value)
 
 
-#Creates a badge
+#Builds a skeleton Faust table template, should be changed when new Criteria is added
+def get_table_template():
+    table_template = {
+        'count': dict(),
+        'match': dict()
+    }
+    return table_template
+
+
+#Creates a badge and stores it in Faust table so that are not reawareded to a User
 def store_badge(username, badge_name, badge_details,equality):
     new_badge = {
         'type': 'badge',
         'username': username,
         'badge': badge_name,
         'description': badge_details['description'],
-        'event_type': badge_details['event_type'],
         'criteria': badge_details['criteria'],
         'equality': equality
     }
+
+    if (new_badge['username'] not in awarded_badges) or awarded_badges[new_badge['username']] is None:
+        awarded_badges[new_badge['username']] = set()
+
+    awarded_badges_to_current_user = set(awarded_badges[new_badge['username']])
+    awarded_badges_to_current_user.add(new_badge['equality'])
+    awarded_badges[new_badge['username']] = awarded_badges_to_current_user
+
     new_badge_json = json.dumps(new_badge)
     datastore.insert(new_badge_json.encode('utf-8'))
+
 
 if __name__ == "__main__":
     app.main()
