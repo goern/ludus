@@ -26,7 +26,6 @@ awarded_badges = app.Table(awarder_configuration['badges_table_name'], default=N
 #Initializing datastore
 datastore = Datastore.get_datastore(datastore_configuration['type'])
 
-
 #Initializing lookup data
 def get_event_to_badge():
     event_to_badges = dict()
@@ -34,7 +33,7 @@ def get_event_to_badge():
         badge = badge_config[badge_name]
         badge['name'] = badge_name
 
-        if badge['criteria']['type'] == 'count':
+        if badge['criteria']['type'] == 'count' or badge['criteria']['type'] == 'every_event':
             if badge['event_type'] in event_to_badges:
                 badges = event_to_badges[badge['event_type']]
                 badges.append(badge)
@@ -130,8 +129,7 @@ def update_match(data,event):
 def evaluate_user_data_for_badges(event):
     if event_data is not None:
         for badge in event_to_badges[event['event_type']]:
-            if is_badge_awarded(event['username'], badge['name']) == False:
-                award_badge(event['username'], badge['name'], badge, event)
+            award_badge(event['username'], badge['name'], badge, event)
 
 
 def award_badge(username, badge_name, badge_details, event):
@@ -141,6 +139,8 @@ def award_badge(username, badge_name, badge_details, event):
         award_badge_for_type_count(username, badge_name, badge_details)
     elif criteria_type == 'match':
         award_badge_for_type_match(username, badge_name, badge_details, event)
+    elif criteria_type == 'every_event':
+        award_badge_for_type_every_event(username, badge_name, badge_details, event)
 
 
 def is_badge_awarded(username, badge_name):
@@ -152,10 +152,14 @@ def is_badge_awarded(username, badge_name):
 
 
 def award_badge_for_type_count(username, badge_name, badge_details):
+    equality = badge_name
+    if is_badge_awarded(username, equality):
+        return
+
     event_count = event_data[username]['count'][badge_details['event_type']]
 
     if event_count >= badge_details['criteria']['value']:
-        store_badge(username,badge_name,badge_details, badge_name)
+        store_badge(username,badge_name,badge_details, equality)
 
 
 def award_badge_for_type_match(username, badge_name, badge_details, event):
@@ -165,12 +169,23 @@ def award_badge_for_type_match(username, badge_name, badge_details, event):
     state = states[match_value]
     equality = event['event_type'] + '_' +str(match_value)
 
+    if is_badge_awarded(username, equality):
+        return
+
     for matching_event in badge_details['criteria']['matching_events']:
         if matching_event['event_type'] not in state:
             return
 
     store_badge(username, badge_name, badge_details, equality)
     del event_data[username][badge_details['criteria']['type']][badge_name][match_value]
+
+
+def award_badge_for_type_every_event(username, badge_name, badge_details, event):
+    equality = badge_name+' '+event['timestamp'].strftime("%s")
+    if is_badge_awarded(username, equality):
+        return
+
+    store_badge(username,badge_name,badge_details, equality)
 
 
 def get_matching_field(matching_events, event):
