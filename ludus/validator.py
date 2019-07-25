@@ -1,39 +1,27 @@
 import json
+from configs import event_configuration
+from jsonschema import ValidationError
+from jsonschema import validate
+
 
 class Validator:
-
     def get_validator(event_source):
-        if event_source == "github":
-            return GithubEventValidator()
-        elif event_source == "trello":
-            return TrelloEventValidator()
+        if event_source == "default":
+            return DefaultEventValidator()
 
 
-class GithubEventValidator:
-    def is_valid(self, event):
-        if 'action' in event and event['action'] == "opened" and 'issue' in event:
-            return True, 'issue'
-        elif 'action' in event and event['action'] == "closed" and 'issue' in event:
-            return True, 'issue_closed'
-        elif 'action' in event and event['action'] == "closed" and 'pull_request' in event and \
-                event['pull_request']['merged'] == True:
-            return True, 'pull_request'
-        elif 'comment' in event:
-            return True, 'comment'
+class DefaultEventValidator:
+    def get_valid_event_types(self, event):
+        valid_event_types = list()
 
-        return False, None
+        for event_type in event_configuration.config.keys():
+            try:
+                schema = event_configuration.config[event_type]['validator']
+                validate(instance=event, schema=schema)
+                valid_event_types.append(event_type)
+            except ValidationError as ve:
+                continue
 
+        return valid_event_types
 
-class TrelloEventValidator:
-    def is_valid(self, event):
-        if 'action' in event and 'type' in event['action'] and event['action']['type'] == 'createCard' and \
-                event['action']['data']['list']['name'] == 'New':
-            return True, 'new_idea'
-
-        elif 'action' in event and 'type' in event['action'] and event['action']['type'] == 'updateCard' \
-                and 'listAfter' in event['action']['data'] and ( event['action']['data']['listAfter']['name'] == 'Completed'\
-                or event['action']['data']['listAfter']['name'] == 'Done') :
-            return True, 'task_completed'
-
-        return False, None
 

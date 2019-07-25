@@ -1,0 +1,8 @@
+{
+    "username" : "{{ event['issue']['user']['login'] }}",
+    "timestamp" : "{{ timestamp }}",
+    "event_source" : "github",
+    "event_url" : "{{ event['issue']['html_url'] }}",
+    "event_type" : "issue_closed",
+    "raw_github" : {{ json_event }}
+}

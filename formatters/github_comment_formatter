@@ -1,0 +1,8 @@
+{
+    "username" : "{{ event['sender']['login'] }}",
+    "timestamp" : "{{ timestamp }}",
+    "event_source" : "github",
+    "event_url" : "{{ event['comment']['html_url'] }}",
+    "event_type" : "github_comment",
+    "raw_github" : {{ json_event }}
+}

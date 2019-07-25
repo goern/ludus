@@ -1,0 +1,9 @@
+{
+    "username" : "{{ event['pull_request']['user']['login'] }}",
+    "timestamp" : "{{ timestamp }}",
+    "event_source" : "github",
+    "event_url" : "{{ event['pull_request']['html_url'] }}",
+    "event_type" : "pull_request",
+    "issue_closes" : "{{ variables['issue_number'] }}",
+    "raw_github" : {{ json_event }}
+}

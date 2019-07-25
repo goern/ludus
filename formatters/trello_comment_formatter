@@ -1,0 +1,8 @@
+{
+    "username" : "{{ event['action']['memberCreator']['username'] }}",
+    "timestamp" : "{{ timestamp }}",
+    "event_source" : "trello",
+    "event_url" : "{{ event['model']['url'] }}",
+    "event_type" : "trello_comment",
+    "raw_trello" : {{ json_event }}
+}

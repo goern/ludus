@@ -1,0 +1,25 @@
+schema = {
+    "type" : "object",
+    "properties" : {
+        "action" : {
+            "type" : "string",
+            "pattern" : "closed"
+        },
+        "issue" : {
+            "type" : "object",
+            "properties": {
+                "labels" : {
+                    "properties": {
+                        "name" : {
+                            "type" : "string",
+                            "pattern" : "bug"
+                        }
+                    },
+                    "required": ["name"]
+                }
+            },
+            "required": ["labels"]
+        }
+    },
+    "required": ["action", "issue"]
+}

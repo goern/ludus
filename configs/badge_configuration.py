@@ -158,7 +158,7 @@ badges = {
                     'field': 'raw_trello.action.data.card.id'
                 },
                 {
-                    'event_type': 'task_moved_to_in-progress',
+                    'event_type': 'task_moved_to_inprogress',
                     'field': 'raw_trello.action.data.card.id'
                 },
                 {
