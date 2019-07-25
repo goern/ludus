@@ -44,21 +44,20 @@ badges = {
         },
         'image_file': None
     },
-    'first-bug-fix': {
-        'description': 'awarded for fixing the first issue with tag bug',
-        'event_type': 'bug_fix',
-        'criteria': {
-            'type': 'count',
-            'value': 1
-        },
-        'image_file': None
-    },
     'bug-squasher': {
-        'description': 'awarded for fixing five issues with tag bug',
-        'event_type': 'bug_fix',
+        'description': 'awarded for fixing an issue with the tag bug',
         'criteria': {
-            'type': 'count',
-            'value': 5
+            'type': 'match',
+            'matching_events': [
+                {
+                    'event_type': 'bug_fixed',
+                    'field': 'raw_github.issue.number'
+                },
+                {
+                    'event_type': 'pull_request',
+                    'field': 'issue_closes'
+                }
+            ]
         },
         'image_file': None
     },
