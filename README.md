@@ -1,2 +1,2 @@
 # Ludus
-An open source project to gamify github and trello
+An open source gamification framework
