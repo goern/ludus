@@ -30,5 +30,15 @@ spec:
         namespace: openshift
     type: Docker
   successfulBuildsHistoryLimit: 5
+  triggers:
+    - github:
+        secret: event_listener.github.secret
+      type: GitHub
+    - generic:
+        secret: event_listener.generic.secret
+      type: Generic
+    - type: ConfigChange
+    - imageChange:
+      type: ImageChange
 status:
   lastVersion: 0
