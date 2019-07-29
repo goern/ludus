@@ -1,0 +1,16 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  labels:
+    app: event-listener
+  name: event-listener-route
+  namespace: aiops-kubeflow
+spec:
+  port:
+    targetPort: 8081-tcp
+  to:
+    kind: Service
+    name: event-listener
+    weight: 100
+  wildcardPolicy: None
+status:

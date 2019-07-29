@@ -1,4 +1,4 @@
-from configs.config import datastore_configuration
+from ludus.configs.config import datastore_configuration
 from http import HTTPStatus
 from flask import Flask, Response, request
 from ludus.formatter import Formatter
