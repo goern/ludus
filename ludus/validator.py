@@ -1,4 +1,3 @@
-import json
 from configs import event_configuration
 from jsonschema import ValidationError
 from jsonschema import validate
