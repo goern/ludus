@@ -4,7 +4,6 @@ metadata:
   labels:
     app: awarder
   name: awarder
-  namespace: aiops-kubeflow
 spec:
   output:
     to:

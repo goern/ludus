@@ -4,7 +4,6 @@ metadata:
   labels:
     app: event-listener
   name: event-listener
-  namespace: aiops-kubeflow
 spec:
   output:
     to:

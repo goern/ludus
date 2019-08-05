@@ -5,7 +5,6 @@ metadata:
   labels:
     app: event-listener
   name: event-listener
-  namespace: aiops-kubeflow
 spec:
   replicas: 1
   selector:
@@ -43,5 +42,4 @@ spec:
       from:
         kind: ImageStreamTag
         name: 'event-listener:latest'
-        namespace: aiops-kubeflow
     type: ImageChange

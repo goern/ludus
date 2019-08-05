@@ -4,7 +4,6 @@ metadata:
   labels:
     app: event-listener
   name: event-listener-route
-  namespace: aiops-kubeflow
 spec:
   port:
     targetPort: 8081-tcp
