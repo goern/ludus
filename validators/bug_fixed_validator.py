@@ -9,13 +9,17 @@ schema = {
             "type" : "object",
             "properties": {
                 "labels" : {
-                    "properties": {
-                        "name" : {
-                            "type" : "string",
-                            "pattern" : "bug"
-                        }
-                    },
-                    "required": ["name"]
+                    "type": "array",
+                    "contains": {
+                        "type": "object",
+                        "properties": {
+                            "name" : {
+                                "type" : "string",
+                                "pattern" : "bug"
+                            }
+                        },
+                        "required": ["name"]
+                    }
                 }
             },
             "required": ["labels"]
