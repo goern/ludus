@@ -65,7 +65,6 @@ event_to_badges = get_event_to_badge()
 async def aggregate_events(events):
     async for event in events.group_by(LudusEvent.username):
         if event.type is None:
-            #event_json = json.dumps(event.__dict__, default=datetime_handler)
             event_dict = event.__dict__
             if event.username not in event_data:
                 data = get_table_template()
@@ -123,7 +122,6 @@ def update_match(data,event):
                         state = set()
                         state.add(event['event_type'])
                         data['match'][badge['name']][match_value] = state
-                    break
     return data
 
 
@@ -168,7 +166,7 @@ def award_badge_for_type_match(username, badge_name, badge_details, event):
     field = get_matching_field(badge_details['criteria']['matching_events'],event)
     match_value = get_match_value(field, event)
     state = states[match_value]
-    equality = event['event_type'] + '_' +str(match_value)
+    equality = badge_name + '_' +str(match_value)
 
     if is_badge_awarded(username, equality):
         return
