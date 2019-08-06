@@ -11,6 +11,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 ## Deployment
 	
+## How to use?
 
 ## Built With
 
@@ -22,6 +23,8 @@ These instructions will get you a copy of the project up and running on your loc
 * Kibana
 * Docker 
 * OpenShift
+
+## Credits
 
 ## License
 
