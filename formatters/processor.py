@@ -18,7 +18,6 @@ class DefaultEventProcessor:
 
 class PullRequestEventProcessor:
     def get_variables(self, event_type, event):
-        print(event_type)
         variables = dict()
 
         if event_type != 'pull_request':
