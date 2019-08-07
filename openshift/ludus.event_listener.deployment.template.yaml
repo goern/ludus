@@ -1,0 +1,226 @@
+apiVersion: v1
+kind: Template
+
+
+metadata:
+  name: event-listener
+  annotations:
+    description: "This is a Flask application that listens to events from different webhooks"
+    openshift.io/display-name: "Ludus Event Listener"
+    tags: "ludus, event-listener"
+
+
+parameters:
+- name: GITHUB_URL
+  description: The Github URL of forked Ludus repository
+  value: 'https://github.com/akhil-rane/Ludus.git'
+  required: true
+- name: KAFKA_TOPIC
+  description: The kafka topic to consume events
+  value: 'dynamic-ludus-events-ingest-prod'
+  required: true
+- name: KAFKA_BOOTSTRAP_SERVER
+  description: The kafka bootstrap server in open data hub
+  value: 'kafka.datahub.redhat.com:443'
+  required: true
+- name: AWARDER_NAME
+  description: The name of the awarder application
+  value: 'ludus_awarder'
+  required: true
+- name: AWARDER_PORT
+  description: The port on which awarder application is running
+  value: '5001'
+  required: true
+- name: EVENTS_TABLE_NAME
+  description: The faust table to store events related data for every user
+  value: 'aggregated_event_data_table'
+  required: true
+- name: BADGES_TABLE_NAME
+  description: The faust table to store already awarded badges for every user
+  value: 'awarded_badges_table'
+  required: true
+
+objects:
+  - apiVersion: build.openshift.io/v1
+    kind: BuildConfig
+    metadata:
+      labels:
+        app: event-listener
+      name: event-listener
+    spec:
+      output:
+        to:
+          kind: ImageStreamTag
+          name: 'event-listener:latest'
+      source:
+        git:
+          ref: master
+          uri: ${GITHUB_URL}
+        type: Git
+      strategy:
+        dockerStrategy:
+          dockerfilePath: dockerfiles/event_listener/Dockerfile
+          env:
+            - name: ludus_secret
+              valueFrom:
+                secretKeyRef:
+                  key: ca.crt
+                  name: ludussecret
+            - name: kafka_topic
+              value: ${KAFKA_TOPIC}
+            - name: kafka_bootstrap_server
+              value: ${KAFKA_BOOTSTRAP_SERVER}
+            - name: awarder_name
+              value: ${AWARDER_NAME}
+            - name: awarder_port
+              value: ${AWARDER_PORT}
+            - name: events_table_name
+              value: ${EVENTS_TABLE_NAME}
+            - name: badges_table_name
+              value: ${BADGES_TABLE_NAME}
+
+          from:
+            kind: ImageStreamTag
+            name: 'python:3.6'
+            namespace: openshift
+        type: Docker
+      successfulBuildsHistoryLimit: 5
+      triggers:
+        - github:
+            secret: event_listener.github.secret
+          type: GitHub
+        - generic:
+            secret: event_listener.generic.secret
+          type: Generic
+        - type: ConfigChange
+        - imageChange:
+          type: ImageChange
+    status:
+      lastVersion: 0
+
+  - apiVersion: apps.openshift.io/v1
+    kind: DeploymentConfig
+    metadata:
+      annotations:
+      labels:
+        app: event-listener
+      name: event-listener
+    spec:
+      replicas: 1
+      selector:
+        app: event-listener
+        deploymentconfig: event-listener
+      strategy:
+        activeDeadlineSeconds: 21600
+        resources: {}
+        type: Rolling
+      template:
+        metadata:
+          labels:
+            app: event-listener
+            deploymentconfig: event-listener
+        spec:
+          containers:
+            - name: event-listener
+              ports:
+                - containerPort: 8080
+                  protocol: TCP
+              resources: {}
+              terminationMessagePath: /dev/termination-log
+              terminationMessagePolicy: File
+          dnsPolicy: ClusterFirst
+          restartPolicy: Always
+          schedulerName: default-scheduler
+          securityContext: {}
+          terminationGracePeriodSeconds: 30
+      triggers:
+        - type: ConfigChange
+        - imageChangeParams:
+            automatic: true
+            containerNames:
+              - event-listener
+            from:
+              kind: ImageStreamTag
+              name: 'event-listener:latest'
+          type: ImageChange
+
+  - apiVersion: image.openshift.io/v1
+    kind: ImageStream
+    metadata:
+      generation: 1
+      labels:
+        app: event-listener
+      name: event-listener
+    spec:
+      lookupPolicy:
+        local: false
+  - apiVersion: image.openshift.io/v1
+    kind: ImageStream
+    metadata:
+      labels:
+        app: event-listener
+      name: python-36
+    spec:
+      lookupPolicy:
+        local: false
+      tags:
+        - annotations:
+            openshift.io/imported-from: registry.access.redhat.com/ubi7/python-36
+          from:
+            kind: DockerImage
+            name: registry.access.redhat.com/ubi7/python-36
+          generation: 2
+          importPolicy: {}
+          name: latest
+          referencePolicy:
+            type: Source
+    status:
+      dockerImageRepository: ""
+
+  - apiVersion: route.openshift.io/v1
+    kind: Route
+    metadata:
+      labels:
+        app: event-listener
+      name: event-listener-route
+    spec:
+      port:
+        targetPort: 8081-tcp
+      to:
+        kind: Service
+        name: event-listener
+        weight: 100
+      wildcardPolicy: None
+    status:
+
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      annotations:
+        openshift.io/generated-by: OpenShiftNewApp
+      creationTimestamp: null
+      labels:
+        app: event-listener
+      name: event-listener
+    spec:
+      ports:
+        - name: 8081-tcp
+          port: 8081
+          protocol: TCP
+          targetPort: 5000
+      selector:
+        app: event-listener
+        deploymentconfig: event-listener
+      sessionAffinity: None
+      type: ClusterIP
+    status:
+      loadBalancer: {}
+
+  - apiVersion: v1
+    kind: Secret
+    metadata:
+      name: ludussecret
+    type: Opaque
+    data:
+      ca.crt: >-
+        LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURMVENDQWhXZ0F3SUJBZ0lKQUo0NVRtT0lkMTZVTUEwR0NTcUdTSWIzRFFFQkN3VUFNQzB4RXpBUkJnTlYKQkFvTUNtbHZMbk4wY21sdGVta3hGakFVQmdOVkJBTU1EV05zZFhO
