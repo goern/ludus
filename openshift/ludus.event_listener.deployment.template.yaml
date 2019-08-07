@@ -66,6 +66,8 @@ objects:
                 secretKeyRef:
                   key: ca.crt
                   name: ludussecret
+            - name: github_url
+              value: ${GITHUB_URL}
             - name: kafka_topic
               value: ${KAFKA_TOPIC}
             - name: kafka_bootstrap_server

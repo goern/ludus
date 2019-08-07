@@ -1,5 +1,5 @@
 FROM python
-RUN git clone https://github.com/akhil-rane/Ludus.git
+RUN git clone $github_url
 RUN pip3 install -r Ludus/requirements.txt
 EXPOSE 5000
 RUN chmod 777 Ludus
