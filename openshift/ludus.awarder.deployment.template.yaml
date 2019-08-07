@@ -63,6 +63,18 @@ objects:
               secretKeyRef:
                 key: ca.crt
                 name: ludussecret
+          - name: kafka_topic
+            value: ${KAFKA_TOPIC}
+          - name: kafka_bootstrap_server
+            value: ${KAFKA_BOOTSTRAP_SERVER}
+          - name: awarder_name
+            value: ${AWARDER_NAME}
+          - name: awarder_port
+            value: ${AWARDER_PORT}
+          - name: events_table_name
+            value: ${EVENTS_TABLE_NAME}
+          - name: badges_table_name
+            value: ${BADGES_TABLE_NAME}
         from:
           kind: ImageStreamTag
           name: 'python:3.6'
