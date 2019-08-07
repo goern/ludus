@@ -1,10 +1,42 @@
 apiVersion: v1
 kind: Template
+
 metadata:
   name: awarder
   annotations:
     description: "This application analyzes events and awards badges out of certain activity"
     tags: "awarder,ludus"
+
+parameters:
+- name: GITHUB_URL
+  description: The Github URL of forked Ludus repository
+  value: 'https://github.com/akhil-rane/Ludus.git'
+  required: true
+- name: KAFKA_TOPIC
+  description: The kafka topic to consume events
+  value: 'dynamic-ludus-events-ingest-prod'
+  required: true
+- name: KAFKA_BOOTSTRAP_SERVER
+  description: The kafka bootstrap server in open data hub
+  value: 'kafka.datahub.redhat.com:443'
+  required: true
+- name: AWARDER_NAME
+  description: The name of the awarder application
+  value: 'ludus_awarder'
+  required: true
+- name: AWARDER_PORT
+  description: The port on which awarder application is running
+  value: '5001'
+  required: true
+- name: EVENTS_TABLE_NAME
+  description: The faust table to store events related data for every user
+  value: 'aggregated_event_data_table'
+  required: true
+- name: BADGES_TABLE_NAME
+  description: The faust table to store already awarded badges for every user
+  value: 'awarded_badges_table'
+  required: true
+
 objects:
 - apiVersion: build.openshift.io/v1
   kind: BuildConfig
@@ -128,9 +160,3 @@ objects:
         type: Source
   status:
     dockerImageRepository: ""
-
-parameters:
-- name: GITHUB_URL
-  description: The Github URL of forked Ludus repository
-  value: 'https://github.com/akhil-rane/Ludus.git'
-  required: true
