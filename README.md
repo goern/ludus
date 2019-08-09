@@ -18,28 +18,53 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Deployment
 
-- To deploy the event listener application on openshift use following command
-	'''
-	oc process -f openshift/ludus.event_listener.deployment.template.yaml -p GITHUB_URL=<github_url> KAFKA_TOPIC=<kafka_topic_name> KAFKA_BOOTSTRAP_SERVER=<kafka_bootstrap_server>| oc apply -f -
-	'''
+To deploy Event Listener application on an OpenShift cluster use the following command with required parameters:
+        ```
+        oc process -f openshift/ludus.event_listener.deployment.template.yaml -p GITHUB_URL=<github_url> KAFKA_TOPIC=<kafka_topic_name> KAFKA_BOOTSTRAP_SERVER=<kafka_bootstrap_server>| oc apply -f -
+        ```
 
-	<github_url>             : The url of the forked github repository of ludus. The default is 'https://github.com/akhil-rane/Ludus.git'
-	<kafka_topic_name>       : The name of the kafka topic where event lister will publish the incoming events
-	<kafka_bootstrap_server> : The hostname and port of the the kafka bootstrap server. The valid format is hostname:port
+- `GITHUB_URL`: The url of the forked github repository of ludus. The default is https://github.com/akhil-rane/Ludus.git
+
+- `KAFKA_TOPIC`: The name of the kafka topic where event lister will publish the incoming events. The default is ludus_awarder
+
+- `KAFKA_BOOTSTRAP_SERVER`: The hostname and port of the the kafka bootstrap server. The valid format is hostname:port
 
 
-- To deploy the awarder application on openshift use following command
-	'''
-	oc process -f openshift/ludus.awarder.deployment.template.yaml -p GITHUB_URL=<github_url> KAFKA_TOPIC=<kafka_topic_name> KAFKA_BOOTSTRAP_SERVER=<kafka_bootstrap_server> AWARDER_NAME=<awarder_name> AWARDER_PORT=<awarder_port> EVENTS_TABLE_NAME=<events_table_name> BADGES_TABLE_NAME=<badges_table_name> | oc apply -f -
-	'''
+To deploy Awarder application on an OpenShift cluster use the following command with required parameters:
+        ```
+        oc process -f openshift/ludus.awarder.deployment.template.yaml -p GITHUB_URL=<github_url> KAFKA_TOPIC=<kafka_topic_name> KAFKA_BOOTSTRAP_SERVER=<kafka_bootstrap_server> AWARDER_NAME=<awarder_name> AWARDER_PORT=<awarder_port> EVENTS_TABLE_NAME=<events_table_name> BADGES_TABLE_NAME=<badges_table_name> | oc apply -f -
+        ```
 
-	<github_url>             : The url of the forked github repository of ludus. The default is 'https://github.com/akhil-rane/Ludus.git'
-        <kafka_topic_name>       : The name of the kafka topic where event lister will publish the incoming events
-        <kafka_bootstrap_server> : The hostname and port of the the kafka bootstrap server. The valid format is hostname:port
-	<awarder_name>           : The name of the awarder application. This should be unique per kafka cluster. You can scale it to distribute event processing load
-	<awarder_port> 		 : The port number of the awarder application
-        <events_table_name>      : The table where events data of the user will be stored by awarder. This should be unique per kafka cluster.
-        <badges_table_name>      : The table where all previously awarded badges for the user will stored by the awarder.This should be unique per kafka cluster
+- `GITHUB_URL`: The url of the forked github repository of ludus. The default is https://github.com/akhil-rane/Ludus.git
+
+- `KAFKA_TOPIC`: The name of the kafka topic where event lister will publish the incoming events. The default is ludus_awarder
+
+- `KAFKA_BOOTSTRAP_SERVER`: The hostname and port of the the kafka bootstrap server. The valid format is hostname:port
+
+- `AWARDER_NAME`: The name of the awarder application. This should be unique per kafka cluster. You can scale it to distribute event processing load
+
+- `AWARDER_PORT`: The port number of the awarder application
+
+- `EVENTS_TABLE_NAME`: The table where events data of the user will be stored by awarder. This should be unique per kafka cluster.
+        
+- `BADGES_TABLE_NAME`: The table where all previously awarded badges for the user will stored by the awarder.This should be unique per kafka cluster
+
+If Event Listener application is not behind the firewall, the hostname of the 'event-listener' service on the OpenShift Cluster will be the `LUDUS_URL`. This can be used to configure the webhooks 
+
+If Event Listener application is behind the firewall, we need to configure [ultrahook](http://www.ultrahook.com/faq) to receive webhooks behind the firewall. Register and get your `ULTRAHOOK_API_KEY` [here] (http://www.ultrahook.com/register). Please remember the `WEBHOOK_NAMESPACE`. This will be unique for your ultrahook account.
+
+
+To deploy Ultrahook on an OpenShift cluster use the following command with required parameters:
+        ```
+        oc process -f openshift/ludus.ultrahook.deployment.template.yaml -p ULTRAHOOK_API_KEY=`echo -n "<ultrahook_api_key>" | base64` ULTRAHOOK_SUBDOMAIN=<ultrahook_subdomain> ULTRAHOOK_DESTINATION=<event_listener_hostname>
+        ```
+
+- `ULTRAHOOK_API_KEY`: The api key unique to each ultrahook account
+
+- `ULTRAHOOK_SUBDOMAIN`: A subdomain of your namespace
+- `ULTRAHOOK_DESTINATION`: The hostname of the event_listener service on OpenShift cluster
+
+If you registered your account with the 'ludus.ultrahook.com' as your `WEBHOOK_NAMESPACE` and later deployed the ultrahook with `ULTRAHOOK_SUBDOMAIN` as 'redhat', your `LUDUS_URL`will be 'redhat.ludus.ultrahook.com'
 
 ### How to configure github and trello webhooks?
 
