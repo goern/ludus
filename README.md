@@ -20,9 +20,9 @@ These instructions will get you a copy of the project up and running on your loc
 
 To deploy Event Listener application on an OpenShift cluster use the following command with required parameters:
         
-	```
-        oc process -f openshift/ludus.event_listener.deployment.template.yaml -p GITHUB_URL=<github_url> KAFKA_TOPIC=<kafka_topic_name> KAFKA_BOOTSTRAP_SERVER=<kafka_bootstrap_server>| oc apply -f -
-        ```
+```
+oc process -f openshift/ludus.event_listener.deployment.template.yaml -p GITHUB_URL=<github_url> KAFKA_TOPIC=<kafka_topic_name> KAFKA_BOOTSTRAP_SERVER=<kafka_bootstrap_server>| oc apply -f -
+```
 
 - `GITHUB_URL`: The url of the forked github repository of ludus. The default is https://github.com/akhil-rane/Ludus.git
 
@@ -33,9 +33,9 @@ To deploy Event Listener application on an OpenShift cluster use the following c
 
 To deploy Awarder application on an OpenShift cluster use the following command with required parameters:
         
-	```
-        oc process -f openshift/ludus.awarder.deployment.template.yaml -p GITHUB_URL=<github_url> KAFKA_TOPIC=<kafka_topic_name> KAFKA_BOOTSTRAP_SERVER=<kafka_bootstrap_server> AWARDER_NAME=<awarder_name> AWARDER_PORT=<awarder_port> EVENTS_TABLE_NAME=<events_table_name> BADGES_TABLE_NAME=<badges_table_name> | oc apply -f -
-        ```
+```
+oc process -f openshift/ludus.awarder.deployment.template.yaml -p GITHUB_URL=<github_url> KAFKA_TOPIC=<kafka_topic_name> KAFKA_BOOTSTRAP_SERVER=<kafka_bootstrap_server> AWARDER_NAME=<awarder_name> AWARDER_PORT=<awarder_port> EVENTS_TABLE_NAME=<events_table_name> BADGES_TABLE_NAME=<badges_table_name> | oc apply -f -
+```
 
 - `GITHUB_URL`: The url of the forked github repository of ludus. The default is https://github.com/akhil-rane/Ludus.git
 
@@ -53,14 +53,14 @@ To deploy Awarder application on an OpenShift cluster use the following command 
 
 If Event Listener application is not behind the firewall, the hostname of the 'event-listener' service on the OpenShift Cluster will be the `LUDUS_URL`. This can be used to configure the webhooks 
 
-If Event Listener application is behind the firewall, we need to configure [ultrahook](http://www.ultrahook.com/faq) to receive webhooks behind the firewall. Register and get your `ULTRAHOOK_API_KEY` [here] (http://www.ultrahook.com/register). Please remember the `WEBHOOK_NAMESPACE`. This will be unique for your ultrahook account.
+If Event Listener application is behind the firewall, we need to configure [ultrahook](http://www.ultrahook.com/faq) to receive webhooks behind the firewall. Register and get your `ULTRAHOOK_API_KEY` [here](http://www.ultrahook.com/register). Please remember the `WEBHOOK_NAMESPACE`. This will be unique for your ultrahook account.
 
 
 To deploy Ultrahook on an OpenShift cluster use the following command with required parameters:
         
-	```
-        oc process -f openshift/ludus.ultrahook.deployment.template.yaml -p ULTRAHOOK_API_KEY=`echo -n "<ultrahook_api_key>" | base64` ULTRAHOOK_SUBDOMAIN=<ultrahook_subdomain> ULTRAHOOK_DESTINATION=<event_listener_hostname>
-        ```
+```
+oc process -f openshift/ludus.ultrahook.deployment.template.yaml -p ULTRAHOOK_API_KEY=`echo -n "<ultrahook_api_key>" | base64` ULTRAHOOK_SUBDOMAIN=<ultrahook_subdomain> ULTRAHOOK_DESTINATION=<event_listener_hostname>
+```
 
 - `ULTRAHOOK_API_KEY`: The api key unique to each ultrahook account
 
