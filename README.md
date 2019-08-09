@@ -1,4 +1,4 @@
-# ludus
+# Ludus
 Ludus is a gamification framework for Github and Trello. It can also be extended to other version control and project management tools like Gitlab, Jira etc. This application has been configured with 11 events and 15 badges currently. You can design and contribute more events or badges as per your needs.</br> 
 The Ludus project is sponsered by **Red Hat Inc**. As a part of **Red Hat** AICoE under Team AIOps this project was completed as the Summer Internship project.
 
