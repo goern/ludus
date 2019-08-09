@@ -47,14 +47,14 @@ These instructions will get you a copy of the project up and running on your loc
 
 ## Built With
 
-* Python 
-* Flask
-* Kafka
-* Faust
-* Elasticsearch
-* Kibana
-* Docker 
-* OpenShift
+* Python - interpreted, high-level, general-purpose programming language
+* Flask - web framework written in python 
+* Kafka - distributed streaming platform 
+* Faust - stream processing library, porting the ideas from Kafka Streams to Python
+* Elasticsearch - search engine based on the Lucene library
+* Kibana - data visualization plugin for Elasticsearch
+* Docker - tool to create, deploy, and run applications by using containers
+* OpenShift - kubernates based container orchestration platform
 
 ## Credits
 
