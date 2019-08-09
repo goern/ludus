@@ -19,7 +19,8 @@ These instructions will get you a copy of the project up and running on your loc
 ### Deployment
 
 To deploy Event Listener application on an OpenShift cluster use the following command with required parameters:
-        ```
+        
+	```
         oc process -f openshift/ludus.event_listener.deployment.template.yaml -p GITHUB_URL=<github_url> KAFKA_TOPIC=<kafka_topic_name> KAFKA_BOOTSTRAP_SERVER=<kafka_bootstrap_server>| oc apply -f -
         ```
 
@@ -31,7 +32,8 @@ To deploy Event Listener application on an OpenShift cluster use the following c
 
 
 To deploy Awarder application on an OpenShift cluster use the following command with required parameters:
-        ```
+        
+	```
         oc process -f openshift/ludus.awarder.deployment.template.yaml -p GITHUB_URL=<github_url> KAFKA_TOPIC=<kafka_topic_name> KAFKA_BOOTSTRAP_SERVER=<kafka_bootstrap_server> AWARDER_NAME=<awarder_name> AWARDER_PORT=<awarder_port> EVENTS_TABLE_NAME=<events_table_name> BADGES_TABLE_NAME=<badges_table_name> | oc apply -f -
         ```
 
@@ -55,7 +57,8 @@ If Event Listener application is behind the firewall, we need to configure [ultr
 
 
 To deploy Ultrahook on an OpenShift cluster use the following command with required parameters:
-        ```
+        
+	```
         oc process -f openshift/ludus.ultrahook.deployment.template.yaml -p ULTRAHOOK_API_KEY=`echo -n "<ultrahook_api_key>" | base64` ULTRAHOOK_SUBDOMAIN=<ultrahook_subdomain> ULTRAHOOK_DESTINATION=<event_listener_hostname>
         ```
 
