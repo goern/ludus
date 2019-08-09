@@ -1,6 +1,6 @@
 # ludus
 Ludus is a gamification framework for Github and Trello. It can also be extended to other version control and project management tools like Gitlab, Jira etc. This application has been configured with 11 events and 15 badges currently. You can design and contribute more events or badges as per your needs.</br> 
-The Ludus project is sponsered by **Red Hat Inc**. As a part of **Red Hat** AICoE under Team AIOps this project was completed as the Summer Internship project.
+The Ludus project was completed as a part of the Summer Internship program at **Red Hat Inc**.
 
 ## Motivation
 
@@ -70,6 +70,14 @@ oc process -f openshift/ludus.ultrahook.deployment.template.yaml -p ULTRAHOOK_AP
 If you registered your account with the 'ludus.ultrahook.com' as your `WEBHOOK_NAMESPACE` and later deployed the ultrahook with `ULTRAHOOK_SUBDOMAIN` as 'redhat', your `LUDUS_URL`will be 'redhat.ludus.ultrahook.com'
 
 ### How to configure github and trello webhooks?
+
+To set up a github webhook, go to the settings page of your repository or organization. From there, click Webhooks, then Add webhook. Now enter/configure following details:
+
+- `Payload URL`: `LUDUS_URL`
+- `Content type`: application/json
+- `Which events would you like to trigger this webhook?`: Send me everything
+  
+To set up a trello webhook, please follow the instruction given [here](https://developers.trello.com/page/webhooks).
 
 ### How to configure new events and badges?
 
