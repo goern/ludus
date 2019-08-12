@@ -59,7 +59,7 @@ If Event Listener application is behind the firewall, we need to configure [ultr
 To deploy Ultrahook on an OpenShift cluster use the following command with required parameters:
         
 ```
-oc process -f openshift/ludus.ultrahook.deployment.template.yaml -p ULTRAHOOK_API_KEY=`echo -n "<ultrahook_api_key>" | base64` ULTRAHOOK_SUBDOMAIN=<ultrahook_subdomain> ULTRAHOOK_DESTINATION=<event_listener_hostname>
+oc process -f openshift/ludus.ultrahook.deployment.template.yaml -p ULTRAHOOK_API_KEY=`echo -n "<ultrahook_api_key>" | base64` ULTRAHOOK_SUBDOMAIN=<ultrahook_subdomain> ULTRAHOOK_DESTINATION=<event_listener_hostname> | oc apply -f -
 ```
 
 - `ULTRAHOOK_API_KEY`: The api key unique to each ultrahook account
@@ -67,7 +67,7 @@ oc process -f openshift/ludus.ultrahook.deployment.template.yaml -p ULTRAHOOK_AP
 - `ULTRAHOOK_SUBDOMAIN`: A subdomain of your namespace
 - `ULTRAHOOK_DESTINATION`: The hostname of the event_listener service on OpenShift cluster
 
-If you registered your account with the 'ludus.ultrahook.com' as your `WEBHOOK_NAMESPACE` and later deployed the ultrahook with `ULTRAHOOK_SUBDOMAIN` as 'redhat', your `LUDUS_URL`will be 'redhat.ludus.ultrahook.com'
+If you registered your account with the 'ludus.ultrahook.com' as your `WEBHOOK_NAMESPACE` and later deployed the ultrahook with `ULTRAHOOK_SUBDOMAIN` as 'redhat', your `LUDUS_URL`will be 'http://redhat.ludus.ultrahook.com'
 
 ### How to configure github and trello webhooks?
 
@@ -77,7 +77,7 @@ To set up a github webhook, go to the settings page of your repository or organi
 - `Content type`: application/json
 - `Which events would you like to trigger this webhook?`: Send me everything
   
-To set up a trello webhook, please follow the instruction given [here](https://developers.trello.com/page/webhooks).
+To set up a trello webhook, please follow the instructions given [here](https://developers.trello.com/page/webhooks).
 
 ### How to configure new events and badges?
 
