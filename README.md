@@ -83,7 +83,9 @@ To set up a trello webhook, please follow the instructions given [here](https://
 
 ## Dashboard Screenshots
 
-![dashboard_screenshot_1](/docs/dashboard_screenshot_1.png)[ENTER]
+![dashboard_screenshot_1](/docs/dashboard_screenshot_1.png)
+
+
 
 ![dashboard_screenshot_2](/docs/dashboard_screenshot_2.png)
 
