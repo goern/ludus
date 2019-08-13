@@ -81,6 +81,13 @@ To set up a trello webhook, please follow the instructions given [here](https://
 
 ### How to configure new events and badges?
 
+## Dashboard Screenshots
+
+![dashboard_screenshot_1](/docs/dashboard_screenshot_1.png)
+
+![dashboard_screenshot_2](/docs/dashboard_screenshot_2.png)
+
+
 ## Built With
 
 * Python - interpreted, high-level, general-purpose programming language
