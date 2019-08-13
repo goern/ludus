@@ -10,7 +10,7 @@ According to TalentLMS Gamification at Work Survey 2018, about 85 % of employees
 
 ![architecture](/docs/architecture.png)
 
-For more information on the Open Data Hub architecture go [here](https://opendatahub.io/news/2018-12-04/open-data-hub-overview.html)
+For more information on the Open Data Hub architecture and installation go [here](https://opendatahub.io/arch.html)
 
 ## Getting started
 
