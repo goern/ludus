@@ -51,7 +51,7 @@ oc process -f openshift/ludus.awarder.deployment.template.yaml -p GITHUB_URL=<gi
         
 - `BADGES_TABLE_NAME`: The table where all previously awarded badges for the user will stored by the awarder.This should be unique per kafka cluster
 
-If Event Listener application is not behind the firewall, the hostname of the 'event-listener' service on the OpenShift Cluster will be the `LUDUS_URL`. This can be used to configure the webhooks 
+If Event Listener application is not behind the firewall, the hostname of the 'event-listener-route' Route on the OpenShift Cluster will be the `LUDUS_URL`. This can be used to configure the webhooks 
 
 If Event Listener application is behind the firewall, we need to configure [ultrahook](http://www.ultrahook.com/faq) to receive webhooks behind the firewall. Register and get your `ULTRAHOOK_API_KEY` [here](http://www.ultrahook.com/register). Please remember the `WEBHOOK_NAMESPACE`. This will be unique for your ultrahook account.
 
@@ -65,7 +65,7 @@ oc process -f openshift/ludus.ultrahook.deployment.template.yaml -p ULTRAHOOK_AP
 - `ULTRAHOOK_API_KEY`: The api key unique to each ultrahook account
 
 - `ULTRAHOOK_SUBDOMAIN`: A subdomain of your namespace
-- `ULTRAHOOK_DESTINATION`: The hostname of the event_listener service on OpenShift cluster
+- `ULTRAHOOK_DESTINATION`: The hostname of the 'event-listener-route' Route on OpenShift cluster
 
 If you registered your account with the 'ludus.ultrahook.com' as your `WEBHOOK_NAMESPACE` and later deployed the ultrahook with `ULTRAHOOK_SUBDOMAIN` as 'redhat', your `LUDUS_URL`will be 'http://redhat.ludus.ultrahook.com'
 
