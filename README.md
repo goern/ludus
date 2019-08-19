@@ -110,7 +110,7 @@ schema = {
 }
 ```
 
-- Add this new event to event_configuration.py file in configs directory. You have to also add validator and formatter for it. A sample configuration for Github Comment event is given below
+- Add this new event to event_configuration.py file in configs directory. You have to also add validator's schema object and the name of the formatter template to it. A sample configuration for Github Comment event is given below
 ```
 'github_comment': {
         'validator': github_comment_validator.schema,
