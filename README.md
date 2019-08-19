@@ -14,7 +14,7 @@ For more information on the Open Data Hub architecture and installation go [here
 
 ## Getting started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live OpenShift Cluster.
+These instructions will get you a copy of the project up and running on a live OpenShift Cluster.
 
 ### Deployment
 
