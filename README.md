@@ -81,6 +81,43 @@ To set up a trello webhook, please follow the instructions given [here](https://
 
 ### How to configure new events and badges?
 
+Before adding new events and badges we need to fork this repository. Once you push newly added events and badges, you can use the URL of the forked repository as the `LUDUS_URL` while deploying your application.
+
+To configure a new event follow the steps given below:
+
+- Create a schema for your new event using [jsonschema](https://pypi.org/project/jsonschema/), put it in a python file and add this file to the 'validators' directory. A sample validator file content for Github Comment event is given below
+```
+schema = {
+    "type" : "object", 
+    "properties" : {
+        "comment" : {
+            "type" : "object",
+        }
+    },
+    "required": ["comment"]
+}
+```
+
+- Create a [jinja](https://jinja.palletsprojects.com/en/2.10.x/) template for your new event that formats the json event payload. Add this file to the formatters directory. A sample formatter template for Github Comment event is given below
+```
+{
+    "username" : "{{ event['sender']['login'] }}",
+    "timestamp" : "{{ timestamp }}",
+    "event_source" : "github",
+    "event_url" : "{{ event['comment']['html_url'] }}",
+    "event_type" : "github_comment",
+    "raw_github" : {{ json_event }}
+}
+```
+
+- Add this new event to event_configuration.py file in configs directory. You have to also add validator and formatter for it. A sample configuration for Github Comment event is given below
+```
+'github_comment': {
+        'validator': github_comment_validator.schema,
+        'formatter': 'github_comment_formatter'
+    }
+```
+
 ## Dashboard Screenshots
 
 ![dashboard_screenshot_1](/docs/dashboard_screenshot_1.png)
