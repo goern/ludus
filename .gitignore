@@ -109,3 +109,4 @@ venv.bak/
 secrets/
 .vault-pass
 
+.thoth_last_analysis_id

@@ -1,0 +1,51 @@
+# This is  Thoth's configuration file placed in a root of a repo
+# (named as .thoth.yaml) used by Thamos CLI as well as by Thoth bots. Please
+# adjust values listed below as desired.
+
+# A remote Thoth service to talk to:
+host: stage.thoth-station.ninja
+
+# Configure TLS verification for communication with remote Thoth instance:
+tls_verify: false 
+
+# Format of requirements file, currently supported is only Pipenv:
+requirements_format: pipenv
+
+runtime_environments:
+  - name: 'ubi:8'
+    # Operating system for which the recommendations should be created:
+    operating_system:
+      name: ubi 
+      version: '8'
+    # Hardware information for the recommendation engine:
+    hardware:
+      # Intel(R) Core(TM) i7-4900MQ CPU @ 2.80GHz
+      cpu_family: 6
+      cpu_model: 60
+    # Software configuration of runtime environment:
+    python_version: '3.6'
+    cuda_version: null
+    # Recommendation type - one of testing, stable, latest:
+    recommendation_type: stable
+    # Number of latest versions considered during advises.
+    limit_latest_versions: null
+
+#
+# Configuration of bots:
+#
+managers:
+  - name: pipfile-requirements
+  - name: info
+  - name: version
+    configuration:
+      # A list of maintainers (GitHub or GitLab accounts) of this repository:
+      maintainers: []
+      # A list of assignees to which the opened pull requests and issues should
+      # be assigned to:
+      assignees: []
+      # Labels for issues and pull requests:
+      labels:
+        - bot
+      # Automatically maintain a changelog file stating features of new
+      # releases:
+      changelog_file: true
